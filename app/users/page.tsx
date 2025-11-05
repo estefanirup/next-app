@@ -2,29 +2,34 @@
 
 import { useEffect, useState } from "react";
 
+interface User {
+    id: number;
+    email: string;
+    first_name: string;
+    last_name: string;
+    avatar: string;
+}
+
 export default function UserList() {
 
-    // Estados
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState<User[]>([]); // <-- tipagem aqui
 
     const loadUsers = async () => {
-        fetch('https://reqres.in/api/users', {
-            method: 'GET',
-            headers: {
-                'x-api-key': 'reqres-free-v1'
-            }
-        })
-        .then(async (response) => {
+        try {
+            const response = await fetch('https://reqres.in/api/users', {
+                method: 'GET',
+                headers: {
+                    'x-api-key': 'reqres-free-v1'
+                }
+            });
             const res = await response.json();
             console.log(res);
             setUsers(res.data); // Alterando o estado de usuários
-        })
-        .catch((err) => {
+        } catch (err) {
             console.log(err);
-        });
+        }
     }
 
-    // Efeito colateral ao carregar o componente
     useEffect(() => {
         loadUsers()
     }, [])
