@@ -33,7 +33,7 @@ export default function Home() {
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row mt-12">
           <a
             className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-bee-yellow text-hive-brown px-5 transition-all hover:bg-honey-gold hover:scale-[1.03] md:w-[180px]"
-            href="#"
+            href="/login"
           >
             Entrar na Colmeia
           </a>
