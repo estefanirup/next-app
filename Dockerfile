@@ -5,8 +5,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (Next.js needs dev deps to build)
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -14,8 +14,11 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Expose port
-EXPOSE 3000
+# Set Next.js to run on port 80
+ENV PORT=80
 
-# Start the application
-CMD ["npm", "start"]
+# Expose port 80 for docker-compose to use
+EXPOSE 80
+
+# Start the Next.js production server
+CMD ["npm", "run", "start"]
