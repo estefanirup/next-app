@@ -3,11 +3,24 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --bee-yellow: #F2C849;
+  --honey-gold: #F2C063;
+  --hive-brown: #592D23;
+  --cloud-white: #F5F9F9;
+  --sky-blue: #7EB0F2;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-bee-yellow: var(--bee-yellow);
+  --color-honey-gold: var(--honey-gold);
+  --color-hive-brown: var(--hive-brown);
+  --color-cloud-white: var(--cloud-white);
+  --color-sky-blue: var(--sky-blue);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
