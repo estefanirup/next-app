@@ -33,7 +33,7 @@ export default function LoginPage() {
       localStorage.setItem("refreshToken", tokens.RefreshToken);
 
       setMensagem("Login realizado com sucesso!");
-      window.location.href = "/";
+      window.location.href = "/dashboard"; 
     } catch (error) {
       setMensagem("Erro ao conectar com servidor.");
     }
