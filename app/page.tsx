@@ -5,9 +5,6 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col bg-cloud-white font-sans text-hive-brown dark:bg-black dark:text-cloud-white">
 
-      {/* Navbar */}
-      <Navbar />
-
       {/* Main Content */}
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-24 px-10 bg-cloud-white rounded-3xl shadow-xl dark:bg-black sm:items-start mx-auto mt-6">
 
