@@ -2,58 +2,68 @@
 
 import { useEffect, useState } from "react";
 
-interface User {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    avatar: string;
+interface Colmeia {
+    id: string;
+    identificador: string;
+    localizacao: string;
+    peso: number;
+    temperaturaInterna: number;
+    umidadeInterna: number;
 }
 
-export default function UserList() {
+export default function ColmeiaList() {
 
-    const [users, setUsers] = useState<User[]>([]); // <-- tipagem aqui
+    const [colmeias, setColmeias] = useState<Colmeia[]>([]);
 
-    const loadUsers = async () => {
+    const loadColmeias = async () => {
         try {
-            const response = await fetch('https://reqres.in/api/users', {
+            const response = await fetch('/api/colmeias', {
                 method: 'GET',
                 headers: {
                     'x-api-key': 'reqres-free-v1'
                 }
             });
+
             const res = await response.json();
             console.log(res);
-            setUsers(res.data); // Alterando o estado de usuários
+
+            // Se a API retorna { data: [...] }
+            if (res.data) {
+                setColmeias(res.data);
+            } else {
+                setColmeias(res);
+            }
+
         } catch (err) {
-            console.log(err);
+            console.log("Erro ao carregar colmeias:", err);
         }
     }
 
     useEffect(() => {
-        loadUsers()
-    }, [])
+        loadColmeias();
+    }, []);
 
     return (
         <main>
             <div className="max-w-4xl mx-auto p-6">
 
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold">Usuários (API externa)</h1>
+                    <h1 className="text-2xl font-bold">Colmeias (API Externa)</h1>
+
                     <div className="flex gap-3">
                         <button
-                            type='button' 
-                            onClick={() => loadUsers()}
+                            type='button'
+                            onClick={loadColmeias}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
                         >
                             Atualizar
                         </button>
 
                         <a
-                            href="/user/form"
-                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow flex items-center"
+                            href="/colmeias/nova"
+                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
                         >
-                            Novo
+                            Nova Colmeia
                         </a>
                     </div>
                 </div>
@@ -62,23 +72,22 @@ export default function UserList() {
                     <table className="min-w-full bg-white border border-gray-200">
                         <thead className="bg-gray-100">
                             <tr>
-                                <th className="py-3 px-4 border-b text-left">Avatar</th>
-                                <th className="py-3 px-4 border-b text-left">Nome</th>
-                                <th className="py-3 px-4 border-b text-left">E-mail</th>
+                                <th className="py-3 px-4 border-b text-left">Identificador</th>
+                                <th className="py-3 px-4 border-b text-left">Localização</th>
+                                <th className="py-3 px-4 border-b text-left">Peso</th>
+                                <th className="py-3 px-4 border-b text-left">Temp. Interna</th>
+                                <th className="py-3 px-4 border-b text-left">Umidade</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            {users.map((user) => (
-                                <tr key={user.id} className="hover:bg-gray-50">
-                                    <td className="py-3 px-4 border-b">
-                                        <img src={user.avatar} className="w-10 h-10 rounded-full" />
-                                    </td>
-                                    <td className="py-3 px-4 border-b">
-                                        {user.first_name} {user.last_name}
-                                    </td>
-                                    <td className="py-3 px-4 border-b">
-                                        {user.email}
-                                    </td>
+                            {colmeias.map((c) => (
+                                <tr key={c.id} className="hover:bg-gray-50">
+                                    <td className="py-3 px-4 border-b">{c.identificador}</td>
+                                    <td className="py-3 px-4 border-b">{c.localizacao}</td>
+                                    <td className="py-3 px-4 border-b">{c.peso} kg</td>
+                                    <td className="py-3 px-4 border-b">{c.temperaturaInterna} °C</td>
+                                    <td className="py-3 px-4 border-b">{c.umidadeInterna} %</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -90,5 +99,5 @@ export default function UserList() {
                 </a>
             </div>
         </main>
-    )
+    );
 }
