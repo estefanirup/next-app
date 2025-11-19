@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { API_URL_BASE } from "../const";
+import { API_POSTGRES } from "../const";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -12,7 +10,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`${API_URL_BASE}/auth/login`, {
+      const res = await fetch(`${API_POSTGRES}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
