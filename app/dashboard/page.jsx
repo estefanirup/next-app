@@ -2,71 +2,78 @@
 
 import { useEffect, useState } from "react";
 import { API_POSTGRES } from "../const";
-
-import DeviceList from "../components/DeviceList";
 import HiveList from "../components/HiveList";
 import PropertyList from "../components/PropertyList";
+import DeviceList from "../components/DeviceList";
 import SensorList from "../components/SensorList";
 
 export default function DashboardPage() {
-  const [token, setToken] = useState("");
-  const [user, setUser] = useState("");
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("idToken");
-    if (!storedToken) {
-      window.location.href = "/login";
-      return;
-    }
-    setToken(storedToken);
+    const fetchProperties = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
 
-    // Pegar username do token
-    try {
-      const payload = JSON.parse(atob(storedToken.split(".")[1]));
-      setUser(payload["cognito:username"] || payload["email"]);
-    } catch (e) {
-      console.error("Erro ao decodificar token", e);
-    }
+
+      try {
+        const res = await fetch(`${API_POSTGRES}/properties?page=0&size=10`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+        const data = await res.json();
+        setProperties(data.content || data);
+      } catch (err) {
+        console.error("Erro ao buscar propriedades:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperties();
+
+
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("idToken");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    window.location.href = "/login";
-  };
+  if (loading) return <p>Carregando dashboard...</p>;
 
-  return (
-    <main className="p-6 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Dashboard - {user}</h1>
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-        >
-          Sair
-        </button>
-      </div>
+  return (<main className="p-6"> <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Dispositivos</h2>
-        <DeviceList token={token} />
-      </section>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {properties.map((prop) => (
+        <div key={prop.id} className="p-4 border rounded-lg shadow hover:shadow-lg transition">
+          <h2 className="font-semibold text-lg mb-2">{prop.name}</h2>
+          <p className="mb-2">{prop.address}, {prop.number}</p>
+          <p className="mb-4 text-gray-600">{prop.description}</p>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Colmeias</h2>
-        <HiveList token={token} />
-      </section>
+          <div className="flex flex-col gap-2">
+            <button
+              className="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700"
+              onClick={() => window.location.href = `/property/${prop.id}`}
+            >
+              Ver Colmeias
+            </button>
+            <button
+              className="bg-green-600 text-white py-1 px-3 rounded hover:bg-green-700"
+              onClick={() => window.location.href = `/property/edit/${prop.id}`}
+            >
+              Editar Propriedade
+            </button>
+            <button
+              className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600"
+              onClick={() => window.location.href = `/property/new`}
+            >
+              Registrar Nova Propriedade
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </main>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Propriedades</h2>
-        <PropertyList token={token} />
-      </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Sensores</h2>
-        <SensorList token={token} />
-      </section>
-    </main>
   );
 }
