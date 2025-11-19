@@ -9,7 +9,7 @@ export default function Home() {
         <div className="flex flex-col items-center sm:items-start gap-4">
           <div className="flex items-center gap-3">
             <Image
-              src="/bee.png" /* replace with any bee/hive icon */
+              src="/bee.jpg" 
               alt="Bee Logo"
               width={50}
               height={50}
@@ -22,7 +22,7 @@ export default function Home() {
 
           <p className="text-lg max-w-md text-hive-brown/80 dark:text-cloud-white/70">
             Bem-vindo ao Colmeias Hub — um espaço acolhedor para criatividade, colaboração e produtividade.  
-            Tudo com o toque aconchegante da colmeia. 🍯🐝
+            Tudo com o toque aconchegante da colmeia. 
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export default function Home() {
 
         {/* Footer Section */}
         <footer className="mt-20 text-sm text-hive-brown/60 dark:text-cloud-white/40">
-          Feito com ❤️ e 🍯 — Colmeias Hub 2025
+          Feito com amor — Colmeias Hub 2025
         </footer>
 
       </main>
