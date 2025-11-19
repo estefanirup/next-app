@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <header className="bg-blue-700 text-white p-4 shadow">
           <div className="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 className="text-xl font-bold">App Exemplo</h1>
+            <h1 className="text-xl font-bold">Api Cultura</h1>
             <nav>
               <a href="/users" className="mr-4 hover:underline">Lista</a>
               <a href="/users/form" className="hover:underline">Cadastro</a>
