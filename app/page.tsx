@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Navbar from "./components/navbar"; // adjust path if needed
+import Navbar from "./components/Navbar"; // adjust path if needed
 
 export default function Home() {
   return (
