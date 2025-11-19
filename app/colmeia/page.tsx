@@ -17,7 +17,7 @@ export default function ColmeiaList() {
 
     const loadColmeias = async () => {
         try {
-            const response = await fetch('/api/colmeias', {
+            const response = await fetch('/api/colmeia', {
                 method: 'GET',
                 headers: {
                     'x-api-key': 'reqres-free-v1'
