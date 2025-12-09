@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { API_POSTGRES } from "../const";
+import { API_POSTGRES } from "../../../const";
 
 export default function SensorList() {
     const [sensors, setSensors] = useState([]);

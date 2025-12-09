@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { API_POSTGRES } from "../const";
+import { API_POSTGRES } from "../../../const";
 
 export default function PropertyList() {
     const [properties, setProperties] = useState([]);
