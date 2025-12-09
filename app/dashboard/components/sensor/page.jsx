@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link"; // ✅ Import necessário
 import { API_POSTGRES } from "../../../const";
 
 const COLORS = {
@@ -21,15 +22,12 @@ export default function SensorList() {
       if (!token) return;
 
       try {
-        const res = await fetch(
-          `${API_POSTGRES}/sensors?page=0&size=10`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          }
-        );
+        const res = await fetch(`${API_POSTGRES}/sensors?page=0&size=10`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
 
         const data = await res.json();
         setSensors(data.content || data);
@@ -56,25 +54,48 @@ export default function SensorList() {
       className="p-8 min-h-screen"
       style={{ background: COLORS.CLOUD_WHITE }}
     >
-      {/* Cabeçalho */}
+      {/* HEADER */}
       <div className="flex items-center justify-between mb-8">
-        <h1
-          className="text-2xl font-semibold"
-          style={{ color: COLORS.HIVE_BROWN }}
-        >
-          Sensores
-        </h1>
+        {/* Título + contador */}
+        <div>
+          <h1
+            className="text-2xl font-semibold mb-1"
+            style={{ color: COLORS.HIVE_BROWN }}
+          >
+            🌡️ Sensores
+          </h1>
 
-        <span
-          className="text-sm px-4 py-1 rounded-full"
+          <span
+            className="inline-block text-xs px-3 py-1 rounded-full"
+            style={{
+              background: COLORS.HONEY_GOLD,
+              color: COLORS.HIVE_BROWN,
+              fontWeight: 600,
+            }}
+          >
+            {sensors.length} registrados
+          </span>
+        </div>
+
+        {/* BOTÃO NOVO SENSOR */}
+        <Link
+          href="/dashboard/components/sensor/new"
+          className="
+            flex items-center gap-2
+            px-5 py-2.5
+            rounded-xl
+            text-sm font-semibold
+            shadow-sm transition-all
+            hover:-translate-y-0.5 hover:shadow-md
+          "
           style={{
-            background: COLORS.HONEY_GOLD,
-            color: COLORS.HIVE_BROWN,
-            fontWeight: 600,
+            background: COLORS.HIVE_BROWN,
+            color: "#fff",
           }}
         >
-          {sensors.length} registros
-        </span>
+          <span className="text-lg">＋</span>
+          Novo sensor
+        </Link>
       </div>
 
       {/* Estado vazio */}
@@ -108,8 +129,7 @@ export default function SensorList() {
               {/* Valor e Status */}
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-700">
-                  Valor atual:{" "}
-                  <strong>{sensor.lastValue ?? "--"}</strong>
+                  Valor atual: <strong>{sensor.lastValue ?? "--"}</strong>
                 </span>
 
                 <span
