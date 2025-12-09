@@ -3,46 +3,132 @@
 import { useEffect, useState } from "react";
 import { API_POSTGRES } from "../../../const";
 
+const COLORS = {
+  BEE_YELLOW: "#F2C849",
+  HONEY_GOLD: "#F2C063",
+  HIVE_BROWN: "#592D23",
+  CLOUD_WHITE: "#F5F9F9",
+  SKY_BLUE: "#7EB0F2",
+};
+
 export default function SensorList() {
-    const [sensors, setSensors] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [sensors, setSensors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchSensors = async () => {
-            const token = localStorage.getItem("accessToken");
-            if (!token) return;
+  useEffect(() => {
+    const fetchSensors = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
 
+      try {
+        const res = await fetch(
+          `${API_POSTGRES}/sensors?page=0&size=10`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          }
+        );
 
-            try {
-                const res = await fetch(`${API_POSTGRES}/sensors?page=0&size=10`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: "application/json",
-                    },
-                });
-                const data = await res.json();
-                setSensors(data.content || data);
-            } catch (err) {
-                console.error("Erro ao buscar sensores:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+        const data = await res.json();
+        setSensors(data.content || data);
+      } catch (err) {
+        console.error("Erro ao buscar sensores:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchSensors();
+    fetchSensors();
+  }, []);
 
-
-    }, []);
-
-    if (loading) return <p>Carregando sensores...</p>;
-
-    return (<div className="p-4 border rounded-md mb-4"> <h2 className="font-bold text-lg mb-2">Sensores</h2>
-        {sensors.length === 0 ? (<p>Nenhum sensor encontrado.</p>
-        ) : (<ul className="list-disc pl-5">
-            {sensors.map((sensor) => (<li key={sensor.id}>
-                {sensor.type} ({sensor.measurementUnit}) - Valor: {sensor.lastValue} - Status:{" "}
-                {sensor.status} </li>
-            ))} </ul>
-        )} </div>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-48 text-gray-500">
+        Carregando sensores...
+      </div>
     );
+  }
+
+  return (
+    <section
+      className="p-8 min-h-screen"
+      style={{ background: COLORS.CLOUD_WHITE }}
+    >
+      {/* Cabeçalho */}
+      <div className="flex items-center justify-between mb-8">
+        <h1
+          className="text-2xl font-semibold"
+          style={{ color: COLORS.HIVE_BROWN }}
+        >
+          Sensores
+        </h1>
+
+        <span
+          className="text-sm px-4 py-1 rounded-full"
+          style={{
+            background: COLORS.HONEY_GOLD,
+            color: COLORS.HIVE_BROWN,
+            fontWeight: 600,
+          }}
+        >
+          {sensors.length} registros
+        </span>
+      </div>
+
+      {/* Estado vazio */}
+      {sensors.length === 0 ? (
+        <div className="bg-white rounded-xl p-10 text-center text-gray-500 shadow-sm">
+          Nenhum sensor cadastrado.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {sensors.map((sensor, index) => (
+            <div
+              key={sensor.id ?? `sensor-${index}`}
+              className="bg-white rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg"
+            >
+              {/* Tipo do Sensor */}
+              <h3
+                className="text-lg font-semibold mb-3"
+                style={{ color: COLORS.HIVE_BROWN }}
+              >
+                {sensor.type}
+              </h3>
+
+              {/* Unidade de Medida */}
+              <div className="text-sm text-gray-600 mb-4">
+                Unidade: {sensor.measurementUnit}
+              </div>
+
+              {/* Separador */}
+              <div className="h-px bg-gray-200 mb-4" />
+
+              {/* Valor e Status */}
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-700">
+                  Valor atual:{" "}
+                  <strong>{sensor.lastValue ?? "--"}</strong>
+                </span>
+
+                <span
+                  className="px-3 py-1 rounded-full text-xs font-medium"
+                  style={{
+                    background:
+                      sensor.status === "ATIVO"
+                        ? "rgba(126,176,242,0.15)"
+                        : "rgba(242,192,99,0.25)",
+                    color: COLORS.HIVE_BROWN,
+                  }}
+                >
+                  {sensor.status}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
 }

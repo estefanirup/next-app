@@ -3,46 +3,136 @@
 import { useEffect, useState } from "react";
 import { API_POSTGRES } from "../../../const";
 
+const COLORS = {
+  BEE_YELLOW: "#F2C849",
+  HONEY_GOLD: "#F2C063",
+  HIVE_BROWN: "#592D23",
+  CLOUD_WHITE: "#F5F9F9",
+  SKY_BLUE: "#7EB0F2",
+};
+
 export default function HiveList() {
-    const [hives, setHives] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [hives, setHives] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchHives = async () => {
-            const token = localStorage.getItem("accessToken");
-            if (!token) return;
+  useEffect(() => {
+    const fetchHives = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
 
+      try {
+        const res = await fetch(
+          `${API_POSTGRES}/hives?page=0&size=10`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          }
+        );
 
-            try {
-                const res = await fetch(`${API_POSTGRES}/hives?page=0&size=10`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: "application/json",
-                    },
-                });
-                const data = await res.json();
-                setHives(data.content || data);
-            } catch (err) {
-                console.error("Erro ao buscar colmeias:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+        const data = await res.json();
+        setHives(data.content || data);
+      } catch (err) {
+        console.error("Erro ao buscar colmeias:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchHives();
+    fetchHives();
+  }, []);
 
-
-    }, []);
-
-    if (loading) return <p>Carregando colmeias...</p>;
-
-    return (<div className="p-4 border rounded-md mb-4"> <h2 className="font-bold text-lg mb-2">Colmeias</h2>
-        {hives.length === 0 ? (<p>Nenhuma colmeia encontrada.</p>
-        ) : (<ul className="list-disc pl-5">
-            {hives.map((hive) => (<li key={hive.id}>
-                {hive.nickname} ({hive.beeSpecies}) - Status: {hive.status} - População:{" "}
-                {hive.population} - Produção: {hive.production} kg </li>
-            ))} </ul>
-        )} </div>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-48 text-gray-500">
+        Carregando colmeias...
+      </div>
     );
+  }
+
+  return (
+    <section
+      className="p-8 min-h-screen"
+      style={{ background: COLORS.CLOUD_WHITE }}
+    >
+      {/* Cabeçalho */}
+      <div className="flex items-center justify-between mb-8">
+        <h1
+          className="text-2xl font-semibold"
+          style={{ color: COLORS.HIVE_BROWN }}
+        >
+          Colmeias
+        </h1>
+
+        <span
+          className="text-sm px-4 py-1 rounded-full"
+          style={{
+            background: COLORS.HONEY_GOLD,
+            color: COLORS.HIVE_BROWN,
+            fontWeight: 600,
+          }}
+        >
+          {hives.length} registros
+        </span>
+      </div>
+
+      {/* Estado vazio */}
+      {hives.length === 0 ? (
+        <div className="bg-white rounded-xl p-10 text-center text-gray-500 shadow-sm">
+          Nenhuma colmeia cadastrada.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {hives.map((hive, index) => (
+            <div
+              key={hive.id ?? `hive-${index}`}
+              className="bg-white rounded-2xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg"
+            >
+              {/* Nome */}
+              <h3
+                className="text-lg font-semibold mb-2"
+                style={{ color: COLORS.HIVE_BROWN }}
+              >
+                {hive.nickname}
+              </h3>
+
+              {/* Status */}
+              <span
+                className="inline-block text-xs font-semibold px-3 py-1 rounded-full mb-4"
+                style={{
+                  background:
+                    hive.status === "ATIVA"
+                      ? "#E6F4EA"
+                      : "#E5E7EB",
+                  color:
+                    hive.status === "ATIVA"
+                      ? "#1E7A3A"
+                      : "#4B5563",
+                }}
+              >
+                {hive.status}
+              </span>
+
+              {/* Separador */}
+              <div className="h-px bg-gray-200 mb-4" />
+
+              {/* Infos */}
+              <div className="text-sm text-gray-700 space-y-2">
+                <p>
+                  <strong>Espécie:</strong> {hive.beeSpecies}
+                </p>
+                <p>
+                  <strong>População:</strong> {hive.population}
+                </p>
+                <p>
+                  <strong>Produção:</strong> {hive.production} kg
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
 }
