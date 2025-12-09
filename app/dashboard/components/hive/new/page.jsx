@@ -80,26 +80,26 @@ export default function NewHivePage() {
         setLoading(true);
 
         try {
-            // Monta objeto para envio, ignorando campos vazios
+            // Monta payload com conversão correta de tipos e null/undefined
             const payload = {
                 beeSpecies: form.beeSpecies,
                 nickname: form.nickname,
                 status: form.status,
-                installationDate: form.installationDate || null,
-                lastHarvest: form.lastHarvest || null,
-                coordinates: form.coordinates || null,
-                propertyId: form.propertyId ? Number(form.propertyId) : null,
-                deviceId: form.deviceId ? Number(form.deviceId) : null,
+                installationDate: form.installationDate || undefined,
+                lastHarvest: form.lastHarvest || undefined,
+                coordinates: form.coordinates || undefined,
+                propertyId: form.propertyId ? Number(form.propertyId) : undefined,
+                deviceId: form.deviceId ? Number(form.deviceId) : undefined,
                 population: form.population ? Number(form.population) : undefined,
                 production: form.production ? Number(form.production) : undefined,
                 inspectionNote: form.inspectionNote ? Number(form.inspectionNote) : undefined,
             };
 
-            // Remove chaves com valor null ou undefined
+            // Remove campos undefined para evitar enviar ""
             Object.keys(payload).forEach(
-                (key) => payload[key] === null || payload[key] === undefined && delete payload[key]
+                key => payload[key] === undefined && delete payload[key]
             );
-            
+
             const res = await fetch(`${API_POSTGRES}/hives`, {
                 method: "POST",
                 headers: {
@@ -124,7 +124,6 @@ export default function NewHivePage() {
             setLoading(false);
         }
     };
-
 
     return (
         <section className="p-8 min-h-screen flex flex-col items-center" style={{ background: COLORS.CLOUD_WHITE }}>
@@ -270,7 +269,7 @@ export default function NewHivePage() {
                         <label className="block text-sm font-medium mb-1">Propriedade</label>
                         <select
                             name="propertyId"
-                            value={form.propertyId}
+                            value={form.propertyId || ""}
                             onChange={handleChange}
                             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
                         >
@@ -287,7 +286,7 @@ export default function NewHivePage() {
                         <label className="block text-sm font-medium mb-1">Dispositivo</label>
                         <select
                             name="deviceId"
-                            value={form.deviceId}
+                            value={form.deviceId || ""}
                             onChange={handleChange}
                             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
                         >
